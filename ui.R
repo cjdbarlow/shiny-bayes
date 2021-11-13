@@ -8,7 +8,6 @@ ui <- fluidPage(
   includeCSS("bayes.css"),
   
   # Title
-  titlePanel("False Positive Risk and False Negative Risk Calculator"),
   hr(),
   
   sidebarLayout(
@@ -68,10 +67,10 @@ ui <- fluidPage(
 
       # Significance
       strong("Statistical Signifiance"),
-      helpText("Select whether the trial reported a significant or insignificant result."),
+      helpText("Select whether the trial reported a significant or non-significant result."),
       radioButtons("sig", label = NULL,
-                   choices = list("p < 0.05" = 1,
-                                  "p ≥ 0.05" = 2),
+                   choices = list("Statistically significant" = 1,
+                                  "Statistically non-significant" = 2),
                    selected = 2),
       hr(),
             

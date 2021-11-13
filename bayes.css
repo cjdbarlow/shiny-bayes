@@ -4,6 +4,12 @@
     padding-bottom: 0px;
 }
 
+div.row > div.col-sm-3 {
+    float: left !important;
+    position: relative;
+    width: 25%;
+}
+
 div[role=main] {
     padding-left: 5%;
 }
