@@ -207,7 +207,7 @@ ui <- fluidPage(
   
   hr(),
   
-  helpText("From: Sidebotham D, Barlow CJD.", em("The False Positive and False Negative Risk for Multicentre Trials in Critical Care...")),
+  helpText("From: Sidebotham, David, and C. Jake Barlow.", em("False-Positive and False-Negative Risks for Individual Multicentre Trials in Critical Care"), "BJA Open 1 (March 1, 2022): 100003. https://doi.org/10.1016/j.bjao.2022.100003."),
   br(),
   helpText(HTML("Bayes Factors calculated using the methods described in: Gunel, Erdogan, and James Dickey. 
   <em>Bayes Factors for Independence in Contingency Tables.</em> Biometrika, vol. 61, no. 3, [Oxford University Press, Biometrika Trust], 1974, pp. 545–57. 
