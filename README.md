@@ -6,4 +6,4 @@ A simple web app written in Shiny (for R Studio) that:
 * Performs basic Bayesian analysis and reports the results both numerically and in text.
 
 
-It is available [here](https://chrisjake.github.io/bayes-trial-eval.html).
+It is available [here](https://cjdbarlow.github.io/bayes-trial-eval.html).

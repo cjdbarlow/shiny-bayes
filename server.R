@@ -1,15 +1,30 @@
 # Load packages
-library(BayesFactor)
+library(BayesFactor) # For Gunel-Dickey
+library(abtest) # For Kass-Vaidyanathan
 
 # Define server-side variables
 thresh_low = 0.05
 thresh_high = 0.2
 
 ## Calculate Bayes factor
-bf_fun = function(con_neg, con_pos, int_neg, int_pos, sample, fixed) {
+### Generic function that does light pre-processing and passes it off to a specific function
+bf_fun = function(con_neg, con_pos, int_neg, int_pos, bftype, sample, fixed) {
   
+  if (bftype == "Gunel-Dickey"){
+    bf = bf_gd(con_neg, con_pos, int_neg, int_pos, sample, fixed)
+  } else if (bftype == "Kass-Vaidyanathan"){
+    bf = bf_kv(con_neg, con_pos, int_neg, int_pos)
+  }
+
+  bf
+}
+
+bf_gd = function(con_neg, con_pos, int_neg, int_pos, sample, fixed){
+  
+  # Matrix expected by contingencyTableBF
   bayes_matrix = matrix(c(int_pos, con_pos, int_neg, con_neg), 2,  2)
   
+  # Determine sampletype
   if (sample == "Independent Multinomial") {
     method = "indepMulti"
   } else if (sample == "Joint Multinomial") {
@@ -20,20 +35,41 @@ bf_fun = function(con_neg, con_pos, int_neg, int_pos, sample, fixed) {
     method = "hypergeom"
   }
   
+  # Fixed rows or columns?
   if (fixed == "Intervention") {
     margin = "rows"
   } else if (fixed == "Outcome") {
     margin = "cols"
   }
-
+  
+  # Calculate, extract, return
   BFM_10 = contingencyTableBF(bayes_matrix,
                               sampleType = method,
                               fixedMargin = margin,
                               priorConcentration = 1)
   
   extractBF(BFM_10)$bf
+  
 }
 
+bf_kv = function(con_neg, con_pos, int_neg, int_pos){
+  # Put numbers into list with nomenclature expected for ab_test (total n rather than non-event n)
+  data = list(y1 = con_pos,
+              n1 = con_pos + con_neg,
+              y2 = int_pos,
+              n2 = int_pos + int_neg)
+  
+  # Calculate BF
+  bf = ab_test(data = data,
+               prior_par = list(mu_psi = 0, sigma_psi = 1, mu_beta = 0, sigma_beta = 1))
+  
+  # Extract and return BF10
+  bf = bf[8]$bf
+  bf10 = bf[[1]]
+  bf10
+}
+
+  
 # Define server logic
 server <- function(input, output, session) {
 
@@ -61,7 +97,7 @@ server <- function(input, output, session) {
   #Reactive functions
   ## Calculate raw Bayes Factor (supporting the alternative over the null, i.e. BF 1:0)
   bf_raw = reactive({
-    bf_fun(input$con_neg, input$con_pos, input$int_neg, input$int_pos, input$method, input$fixedMargin)
+    bf_fun(input$con_neg, input$con_pos, input$int_neg, input$int_pos, input$bfmethod, input$samplemethod, input$fixedMargin)
   })
   
   ##BF pretty (reports BF as either BF 1:0 or BF 0:1 so we don't have to deal with numbers < 1)

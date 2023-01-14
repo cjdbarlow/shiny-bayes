@@ -83,65 +83,77 @@ ui <- fluidPage(
                   value = 0.5),
       hr(),
       
-      # Sampling Method
-      strong("Sampling Method"),
-      helpText("Select the sampling method most appropriate for recruitment strategy used."),
-      selectInput(inputId = "method",
+      # Methodology
+      strong("Bayes Factor Calculation"),
+      helpText("Select the desired technique for BF calculation. We recommend Kass-Vaidyanathan in most circumstances"),
+      selectInput(inputId = "bfmethod",
                   label = NULL,
-                  choices = list("Independent Multinomial",
-                                 "Joint Multinomial",
-                                 "Poisson",
-                                 "Hypergeometric"),
-                  selected = "Independent Multinomial"),
+                  choices = list("Kass-Vaidyanathan",
+                                 "Gunel-Dickey"),
+                  selected = "Kass-Vaidyanathan"),
       
-      # Some information about each sampling method
+      
+      ## Gunel-Dickey Sampling Method
       conditionalPanel(
-        condition = "input.method == 'Independent Multinomial'",
-        helpText("Independent multinomial sampling is used when either the row totals or column
-                 totals are fixed.",
-                 br(), br(),
-                 "This is the recommended option for most randomised trials, including block-randomised trials."),
-        br(),
-        strong("Fixed row or fixed columns?"),
-        helpText("Select whether the groups were balanced by assignment to the intervention or by outcome."),
-        selectInput(inputId = "fixedMargin",
+        condition = "input.bfmethod == 'Gunel-Dickey'",
+        strong("Sampling Method"),
+        helpText("Select the sampling method most appropriate for recruitment strategy used."),
+        selectInput(inputId = "samplemethod",
                     label = NULL,
-                    choices = list("Intervention",
-                                   "Outcome"),
-                    selected = "Intervention"),
+                    choices = list("Independent Multinomial",
+                                   "Joint Multinomial",
+                                   "Poisson",
+                                   "Hypergeometric"),
+                    selected = "Independent Multinomial"),
+        
+        ### Some information about each sampling method
         conditionalPanel(
-          condition = "input.fixedMargin == 'Intervention'",
-          helpText("Fixed intervention (rows) is required for prospective trials, such as randomised trials.")
+          condition = "input.samplemethod == 'Independent Multinomial'",
+          helpText("Independent multinomial sampling is used when either the row totals or column
+                 totals are fixed.",
+                   br(), br(),
+                   "This is the recommended option for most randomised trials, including block-randomised trials."),
+          br(),
+          strong("Fixed row or fixed columns?"),
+          helpText("Select whether the groups were balanced by assignment to the intervention or by outcome."),
+          selectInput(inputId = "fixedMargin",
+                      label = NULL,
+                      choices = list("Intervention",
+                                     "Outcome"),
+                      selected = "Intervention"),
+          conditionalPanel(
+            condition = "input.fixedMargin == 'Intervention'",
+            helpText("Fixed intervention (rows) is required for prospective trials, such as randomised trials.")
+          ),
+          conditionalPanel(
+            condition = "input.fixedMargin == 'Outcome'",
+            helpText("Fixed outcome (columns) is used when the outcome data is fixed, such as retrospective case-control studies.")
+          )
         ),
+        
         conditionalPanel(
-          condition = "input.fixedMargin == 'Outcome'",
-          helpText("Fixed outcome (columns) is used when the outcome data is fixed, such as retrospective case-control studies.")
-        )
-      ),
-      
-      conditionalPanel(
-        condition = "input.method == 'Joint Multinomial'",
-        helpText(HTML("Joint multinomial sampling is used when the total number of patients is fixed,
+          condition = "input.samplemethod == 'Joint Multinomial'",
+          helpText(HTML("Joint multinomial sampling is used when the total number of patients is fixed,
                  but the row and column totals can vary. <em>e.g.</em> A convenience sample of the first 30 patients seen on a given day."))
-      ),
-      
-      conditionalPanel(
-        condition = "input.method == 'Poisson'",
-        helpText("Poisson sampling is most appropriate when both the total number of patients, and the row
+        ),
+        
+        conditionalPanel(
+          condition = "input.samplemethod == 'Poisson'",
+          helpText("Poisson sampling is most appropriate when both the total number of patients, and the row
                  and column totals are random."),
-        br(),
-        helpText(HTML("This may be most appropriate for convenience samples of non-randomised data, <em>e.g.</em> 
+          br(),
+          helpText(HTML("This may be most appropriate for convenience samples of non-randomised data, <em>e.g.</em> 
                       Mortality of patients receiving spinal vs. general anaesthesia for hip replacement in November."))
-      ),
-      
-      conditionalPanel(
-        condition = "input.method == 'Hypergeometric'",
-        helpText("Hypergeometric sampling is most appropriate when both row and column margins are fixed."),
-        br(),
-        helpText(HTML("Practical uses of this option are rare, and usually occur when a group is defined by an intrinsic property of that group,
+        ),
+        
+        conditionalPanel(
+          condition = "input.samplemethod == 'Hypergeometric'",
+          helpText("Hypergeometric sampling is most appropriate when both row and column margins are fixed."),
+          br(),
+          helpText(HTML("Practical uses of this option are rare, and usually occur when a group is defined by an intrinsic property of that group,
                       <em>e.g.</em> by median split."))
-      )
-    ),
+        )
+      )),
 
     # Outputs
     mainPanel(
