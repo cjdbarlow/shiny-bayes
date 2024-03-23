@@ -66,7 +66,7 @@ ui <- fluidPage(
       br(),
 
       # Significance
-      strong("Statistical Signifiance"),
+      strong("Statistical Significance"),
       helpText("Select whether the trial reported a significant or non-significant result."),
       radioButtons("sig", label = NULL,
                    choices = list("Statistically significant" = 1,
