@@ -3,6 +3,11 @@ library(shiny)
 
 # Define the UI
 ui <- fluidPage(
+  # Load iframe resizer app
+  tags$head(
+    tags$script(src="https://cdnjs.cloudflare.com/ajax/libs/iframe-resizer/3.5.16/iframeResizer.contentWindow.min.js",
+                type="text/javascript")
+  ),
   
   # Load custom CSS
   includeCSS("bayes.css"),
@@ -227,6 +232,8 @@ ui <- fluidPage(
   helpText(HTML("Example data from: COIITSS Study Investigators, Djillali Annane, Alain Cariou, Virginie Maxime, Elie Azoulay, Gilles D’honneur, Jean François Timsit, et al. 
   <em>Corticosteroid Treatment and Intensive Insulin Therapy for Septic Shock in Adults: A Randomized Controlled Trial</em>. 
   JAMA 303, no. 4 (27 January 2010): 341–48. <a href=\"https://doi.org/10.1001/jama.2010.2\">https://doi.org/10.1001/jama.2010.2</a>.
-"))
+")),
+  
+  HTML('<div data-iframe-height></div>')
 )
 
